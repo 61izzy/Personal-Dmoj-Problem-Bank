@@ -1,8 +1,6 @@
 # Personal-Dmoj-Problem-Bank
-Personal DMOJ Problem Bank is a Java application that allows users to store links to DMOJ problems they would like to solve, along with additional info.
-It was created as a beginner friendly tool to help people learn programming through solving problems requiring various coding concepts.
-These concepts will be used to categorize the problems, which the user can manually do so.
+Personal DMOJ Problem Bank is a Java application that allows users to store links to DMOJ problems they would like to solve, along with additional info. It was created as a beginner friendly tool to help people learn programming through solving problems requiring various coding concepts. The program uses Java Swing for the GUI, SQLite for database management, and Jackson to parse JSON files fetched from the DMOJ API.
 
+The program works by asking the user to enter the link to a DMOJ problem they would like to add. After checking that the link is both valid and not in the existing list, the program automatically retrieves and stores additional info, making it easier for the user to keep track of their tasks. They will then be able to categorize the problem under various fundamental coding concepts. Once complete, the problem will be displayed in the list along with its point value, categories, and whether it is complete or not.
 
-The program automatically retrieves and stores additional info once the user adds a new problem, making it easier for them to keep track of their tasks.
-
+In the list, the user can perform multiple actions on the problems and how they are displayed, including choosing how the problems are ordered, what categories they must fall under, and whether problems marked as complete should be hidden or not. The user can also search for problems, which will filter out problems without the entered substring in their name. For the problems that are displayed, the user can edit a problems categories, favorite it, mark it as complete, open it in a browser tab, or delete it. There is a separate list for the users favorite problems.
