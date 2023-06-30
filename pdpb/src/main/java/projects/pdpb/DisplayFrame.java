@@ -238,6 +238,9 @@ public class DisplayFrame extends JFrame {
 	 * @param enabled
 	 */
 	public static void setButtonsEnabled(boolean enabled) {
+		problemButton.setEnabled(enabled);
+		favoritesButton.setEnabled(enabled);
+		archiveButton.setEnabled(enabled);
 		editButton.setEnabled(enabled);
 	}
 }
