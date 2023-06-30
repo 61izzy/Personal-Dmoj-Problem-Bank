@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 public class ProblemFilters extends JPanel {
 	
 	private int low = 0, high = 50, bitset = 0, sort = 0;
-	private boolean reverse = false, hideCompleted = false, isFavorites = false;
+	private boolean reverse = false, hideCompleted = false;
 	private String str;
 	private JButton apply;
 	private JCheckBox reverseBox, hideBox;

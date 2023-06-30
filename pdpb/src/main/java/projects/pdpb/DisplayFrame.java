@@ -16,9 +16,11 @@ public class DisplayFrame extends JFrame {
 	static TabPanel tabs;
 	static JButton problemButton;
 	static JButton favoritesButton;
+	static JButton archiveButton;
 	static JButton editButton;
 	static JLabel problems;
 	static JLabel favorites;
+	static JLabel archive;
 	static JLabel edit;
 	static ProblemList problemTab;
 	static EditProblem editTab;
@@ -55,43 +57,59 @@ public class DisplayFrame extends JFrame {
         this.setIconImage(new ImageIcon(getClass().getResource("/Images/DMOJ logo.png")).getImage());
         
         problems = new JLabel("Problems");
-        problems.setBounds(244, (int)size.getHeight()/5 - 50, (int)size.getWidth()/3, 40);
+        problems.setBounds(201, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
 //        problems.setVisible(true);
         
         favorites = new JLabel("Favorites");
-        favorites.setBounds((int)size.getWidth()/3 + 244, (int)size.getHeight()/5 - 50, (int)size.getWidth()/3, 40);
+        favorites.setBounds((int)size.getWidth()/4 + 181, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
         favorites.setVisible(false);
+
+        archive = new JLabel("Archive");
+        archive.setBounds((int)size.getWidth()/4 * 2 + 167, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
+        archive.setVisible(false);
         
         edit = new JLabel("+");
-        edit.setBounds((int)size.getWidth()/3 * 2 + 269, (int)size.getHeight()/5 - 50, (int)size.getWidth()/3, 40);
+        edit.setBounds((int)size.getWidth()/4 * 3 + 166, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
         edit.setVisible(false);
         
         problemButton = new JButton("Problems");
-        problemButton.setBounds(60, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
+        problemButton.setBounds(60, (int)size.getHeight()/5 - 50, (int)size.getWidth()/5, 40);
         problemButton.setFocusable(true);
         problemButton.setVisible(false);
         problemButton.addActionListener((e) -> {
         	try {
-				setProblemsVisible(false);
+				setProblemsVisible(false, false);
 			} catch (Exception e1) {
 //				e1.printStackTrace();
 			}
         });
         
         favoritesButton = new JButton("Favorites");
-        favoritesButton.setBounds((int)size.getWidth()/3 + 60, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
+        favoritesButton.setBounds((int)size.getWidth()/4 + 40, (int)size.getHeight()/5 - 50, (int)size.getWidth()/5, 40);
         favoritesButton.setFocusable(true);
         favoritesButton.setVisible(true);
         favoritesButton.addActionListener((e) -> {
         	try {
-				setProblemsVisible(true);
+				setProblemsVisible(true, false);
+			} catch (Exception e1) {
+//				e1.printStackTrace();
+			}
+        });
+        
+        archiveButton = new JButton("Archive");
+        archiveButton.setBounds((int)size.getWidth()/4 * 2 + 20, (int)size.getHeight()/5 - 50, (int)size.getWidth()/5, 40);
+        archiveButton.setFocusable(true);
+        archiveButton.setVisible(true);
+        archiveButton.addActionListener((e) -> {
+        	try {
+				setProblemsVisible(false, true);
 			} catch (Exception e1) {
 //				e1.printStackTrace();
 			}
         });
         
         editButton = new JButton("+");
-        editButton.setBounds((int)size.getWidth()/3 * 2 + 60, (int)size.getHeight()/5 - 50, (int)size.getWidth()/4, 40);
+        editButton.setBounds((int)size.getWidth()/4 * 3, (int)size.getHeight()/5 - 50, (int)size.getWidth()/5, 40);
         editButton.setFocusable(true);
         editButton.addActionListener((e) -> {
         	try {
@@ -107,9 +125,11 @@ public class DisplayFrame extends JFrame {
 //        tabs.setBackground(Color.WHITE);
         tabs.add(problems);
         tabs.add(favorites);
+        tabs.add(archive);
         tabs.add(edit);
         tabs.add(problemButton);
         tabs.add(favoritesButton);
+        tabs.add(archiveButton);
         tabs.add(editButton);
         
         this.getContentPane().add(tabs);
@@ -136,20 +156,33 @@ public class DisplayFrame extends JFrame {
 	 * 
 	 * @throws Exception
 	 */
-	public static void setProblemsVisible(boolean isFavorites) throws Exception {
+	public static void setProblemsVisible(boolean isFavorites, boolean isArchive) throws Exception {
 		problemTab.setVisible(true);
 		problemTab.setIsFavorites(isFavorites);
+		problemTab.setIsArchive(isArchive);
 		if (isFavorites) {
 			favoritesButton.setVisible(false);
 			favorites.setVisible(true);
 			problemButton.setVisible(true);
 	    	problems.setVisible(false);
+			archiveButton.setVisible(true);
+	    	archive.setVisible(false);
+		}
+		else if (isArchive) {
+			favoritesButton.setVisible(true);
+			favorites.setVisible(false);
+			problemButton.setVisible(true);
+	    	problems.setVisible(false);
+			archiveButton.setVisible(false);
+	    	archive.setVisible(true);
 		}
 		else {
 			problemButton.setVisible(false);
 	    	problems.setVisible(true);
 			favoritesButton.setVisible(true);
 			favorites.setVisible(false);
+			archiveButton.setVisible(true);
+			archive.setVisible(false);
 		}
     	editTab.setVisible(false);
     	editButton.setVisible(true);
@@ -166,7 +199,10 @@ public class DisplayFrame extends JFrame {
     	problemTab.setVisible(false);
     	problemButton.setVisible(true);
     	favoritesButton.setVisible(true);
+    	archiveButton.setVisible(true);
     	problems.setVisible(false);
+    	favorites.setVisible(false);
+    	archive.setVisible(false);
     	editTab.reset();
     	editTab.setVisible(true);
     	editButton.setVisible(false);

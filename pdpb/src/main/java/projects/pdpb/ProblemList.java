@@ -16,7 +16,7 @@ public class ProblemList extends JPanel {
 	private JScrollPane scrollPane;
 	private JPopupMenu options;
 	private JLayeredPane pane;
-	private boolean mouseEnabled = true, isFavorites = false;
+	private boolean mouseEnabled = true, isFavorites = false, isArchive = false;
 	
 	public ProblemList() throws Exception {
 		filters = new ProblemFilters();
@@ -59,18 +59,20 @@ public class ProblemList extends JPanel {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				boolean temp = false;
+				boolean tempFavorite = false, tempArchived = false;
                 if (row > -1 && column > -1) {
                 	String url = "";
 					try {
 						url = DisplayFrame.db.getURL(String.valueOf(model.getValueAt(row, 0)).replace("\'", "\'\'"));
-						temp = DisplayFrame.db.getFavorite(url) == 1;
+						tempFavorite = DisplayFrame.db.getFavorite(url) == 1;
+						tempArchived = DisplayFrame.db.getArchived(url) == 1;
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
                 }
-                if (temp) c.setBackground(Color.YELLOW);
+                if (tempArchived && tempFavorite) c.setBackground(Color.ORANGE);
+                else if (tempFavorite) c.setBackground(Color.YELLOW);
                 else c.setBackground(Color.WHITE);
                 c.setForeground(Color.BLACK);
 				return c;
@@ -105,6 +107,8 @@ public class ProblemList extends JPanel {
 			else minDist = 0;
 			// doesn't add current problem if it violates any of the active filters
 			if (	isFavorites && rs.getInt("FAVORITE") != 1 ||
+					isArchive && rs.getInt("ARCHIVED") != 1 ||
+					!isArchive && !isFavorites && rs.getInt("ARCHIVED") == 1 ||
 					minDist > 1 || 
 					rs.getInt("POINTS") < filters.getLow() || 
 					rs.getInt("POINTS") > filters.getHigh() || 
@@ -192,7 +196,14 @@ public class ProblemList extends JPanel {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					displayOptions(url, bitset, isFavorite, e.getX(), e.getYOnScreen() - getLocation().y - problems.getTableHeader().getHeight() - (int)DisplayFrame.p.y);
+					int isArchived = 0;
+					try {
+						isArchived = DisplayFrame.db.getArchived(url);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					displayOptions(url, bitset, isFavorite, isArchived, e.getX(), e.getYOnScreen() - getLocation().y - problems.getTableHeader().getHeight() - (int)DisplayFrame.p.y);
 				}
 			}
 		});
@@ -209,13 +220,14 @@ public class ProblemList extends JPanel {
 	 * @param x integer representing the x coordinate of the mouse click
 	 * @param y integer representing the y coordinate of the mouse click
 	 */
-	public void displayOptions(String url, int bitset, int isFavorite, int x, int y) {
+	public void displayOptions(String url, int bitset, int isFavorite, int isArchived, int x, int y) {
 		if (options != null) pane.remove(options); // if previous component still exists in the frame
 //		System.out.printf("%d %d\n", x, y);
 		options = new JPopupMenu();
 		options.setBackground(Color.BLACK);
 		options.setFocusable(true);
 		options.setBounds(x, y, 200, 160);
+		
 		JMenuItem edit = new JMenuItem("Edit");
 		edit.addActionListener((e) -> {
 			options.setVisible(false);
@@ -228,6 +240,7 @@ public class ProblemList extends JPanel {
 			DisplayFrame.editTab.setURLAndCategories(url, bitset);
 		});
 		options.add(edit);
+		
 		JMenuItem favorite = new JMenuItem();
 		if (isFavorite == 1) favorite.setText("Unfavorite");
 		else favorite.setText("Favorite");
@@ -242,6 +255,22 @@ public class ProblemList extends JPanel {
 			}
 		});
 		options.add(favorite);
+		
+		JMenuItem archive = new JMenuItem();
+		if (isArchived == 1) archive.setText("Restore");
+		else archive.setText("Archive");
+		archive.addActionListener((e) -> {
+			options.setVisible(false);
+			try {
+				DisplayFrame.db.markArchived(url, isArchived ^ 1);
+				displayProblems();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		options.add(archive);
+		
 		JMenuItem delete = new JMenuItem("Delete");
 		delete.addActionListener((e) -> {
 			options.setVisible(false);
@@ -295,6 +324,7 @@ public class ProblemList extends JPanel {
 //			}
 		});
 		options.add(delete);
+		
 		pane.add(options);
 		options.show(this, x, y);
 	}
@@ -316,5 +346,14 @@ public class ProblemList extends JPanel {
 	 */
 	public void setIsFavorites(boolean isFavorites) {
 		this.isFavorites = isFavorites;
+	}
+	
+	/**
+	 * Determines whether or not only archived problems will be displayed
+	 * 
+	 * @param isFavorites
+	 */
+	public void setIsArchive(boolean isArchive) {
+		this.isArchive = isArchive;
 	}
 }

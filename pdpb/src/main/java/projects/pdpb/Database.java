@@ -31,13 +31,14 @@ public class Database {
 	         System.exit(0);
       	}
 
+//		 database reset
 //		stmt = c.createStatement();
 //		sql = "DROP TABLE PROBLEMS";
 //		stmt.executeUpdate(sql);
 		
 		// initiates the database if it doesn't exist
 		stmt = c.createStatement();
-        sql = "CREATE TABLE IF NOT EXISTS PROBLEMS (URL TEXT PRIMARY KEY NOT NULL UNIQUE, NAME TEXT NOT NULL, POINTS INT NOT NULL, CATEGORIES INT NOT NULL, COMPLETE INT NOT NULL, FAVORITE INT NOT NULL)"; 
+        sql = "CREATE TABLE IF NOT EXISTS PROBLEMS (URL TEXT PRIMARY KEY NOT NULL UNIQUE, NAME TEXT NOT NULL, POINTS INT NOT NULL, CATEGORIES INT NOT NULL, COMPLETE INT NOT NULL, FAVORITE INT NOT NULL, ARCHIVED INT NOT NULL)"; 
         stmt.executeUpdate(sql);
         
         stmt = c.createStatement();
@@ -112,7 +113,7 @@ public class Database {
         Map<String, Object> json = ((Map<String, Object>) ((Map<String, Object>) mapper.readValue(inputStream, Map.class).get("data")).get("object"));
 		
 		stmt = c.createStatement();
-        sql = "INSERT OR IGNORE INTO PROBLEMS (URL, NAME, POINTS, CATEGORIES, COMPLETE, FAVORITE) VALUES ('" + url + "', '" + ((String)json.get("name")).replace("\'", "\'\'") + "', " + (int)Math.round((double)json.get("points")) + ", 0, 0, 0);"; 
+        sql = "INSERT OR IGNORE INTO PROBLEMS (URL, NAME, POINTS, CATEGORIES, COMPLETE, FAVORITE, ARCHIVED) VALUES ('" + url + "', '" + ((String)json.get("name")).replace("\'", "\'\'") + "', " + (int)Math.round((double)json.get("points")) + ", 0, 0, 0, 0);"; 
         stmt.executeUpdate(sql);
         
         return url;
@@ -161,6 +162,19 @@ public class Database {
 	public void markFavorite(String url, int favorite) throws Exception {
 		stmt = c.createStatement();
         sql = "UPDATE PROBLEMS SET FAVORITE = " + favorite + " WHERE URL = '" + url + "'";
+        stmt.executeUpdate(sql);
+	}
+	
+	/**
+	 * Archives or restores current problem
+	 * 
+	 * @param url string url of the dmoj problem
+	 * @param complete integer representing whether or not the current problem is archived
+	 * @throws Exception
+	 */
+	public void markArchived(String url, int archived) throws Exception {
+		stmt = c.createStatement();
+        sql = "UPDATE PROBLEMS SET ARCHIVED = " + archived + " WHERE URL = '" + url + "'";
         stmt.executeUpdate(sql);
 	}
 	
@@ -260,6 +274,20 @@ public class Database {
         sql = "SELECT FAVORITE FROM PROBLEMS WHERE URL = '" + url + "'";
         rs = stmt.executeQuery(sql);
         return rs.getInt("FAVORITE");
+	}
+	
+	/**
+	 * Returns the integer representing whether the current dmoj problem is archived or not
+	 * 
+	 * @param url link to the dmoj problem
+	 * @return integer representing whether the current dmoj problem is archived or not
+	 * @throws Exception
+	 */
+	public int getArchived(String url) throws Exception {
+		stmt = c.createStatement();
+        sql = "SELECT ARCHIVED FROM PROBLEMS WHERE URL = '" + url + "'";
+        rs = stmt.executeQuery(sql);
+        return rs.getInt("ARCHIVED");
 	}
 	
 	/**

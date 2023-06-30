@@ -51,7 +51,7 @@ public class EditProblem extends JPanel {
 				try {
 					setURLAndCategories(DisplayFrame.db.addProblem(urlField.getText()), 0);
 				} catch (Exception e1) {
-//					e1.printStackTrace();
+					e1.printStackTrace();
 				}
 			}
 		});
@@ -68,7 +68,7 @@ public class EditProblem extends JPanel {
 				}
 			}
 			try { // returns to problem list
-				DisplayFrame.setProblemsVisible(false);
+				DisplayFrame.setProblemsVisible(false, false);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
