@@ -314,14 +314,6 @@ public class ProblemList extends JPanel {
 			confirm.add(noButton);
 			
 			pane.add(confirm, JLayeredPane.PALETTE_LAYER);
-			
-//			try {
-//				DisplayFrame.db.deleteProblem(url);
-//				DisplayFrame.updateProblems();
-//			} catch (Exception e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
 		});
 		options.add(delete);
 		

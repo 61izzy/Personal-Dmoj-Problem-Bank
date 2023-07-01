@@ -127,13 +127,6 @@ public class Database {
 	 * @throws Exception
 	 */
 	public void updateCategories(String url, int bitset) throws Exception {
-		
-		// prob put in gui class or smth
-//		int n = Integer.parseInt(scanner.nextLine()), thing = 0;
-//		for (int i = 0; i < n; i++) {
-//			int bruh = Integer.parseInt(scanner.nextLine());
-//			thing |= 1 << (bruh - 1);
-//		}
 		stmt = c.createStatement();
         sql = "UPDATE PROBLEMS SET CATEGORIES = " + bitset + " WHERE URL = '" + url + "'";
         stmt.executeUpdate(sql);
